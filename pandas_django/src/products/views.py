@@ -11,7 +11,14 @@ def render_chart_view(request):
     purchase_dataframe = pd.DataFrame(Purchase.objects.all().values())
     product_dataframe['product_id'] = product_dataframe['id']
     dataframe_merged = pd.merge(purchase_dataframe, product_dataframe, on='product_id').drop(['date_y', 'id_y'], axis=1).rename({'date_x':'purchase date','id_x':'id'}, axis=1)
-
+    if request.method == 'POST':
+        print(request.POST)
+        chart_type = request.POST.get('sales')
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        print(chart_type)
+        print(date_from)
+        print(date_from)
 
 
     # create a context dictionary containing the product data in html format
