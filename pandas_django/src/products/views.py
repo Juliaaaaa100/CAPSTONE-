@@ -15,14 +15,15 @@ def render_chart_view(request):
  
     if purchase_dataframe.shape[0] > 0:
         dataframe_merged = pd.merge(purchase_dataframe, product_dataframe, on='product_id').drop(['date_y', 'id_y'], axis=1).rename({'date_x':'purchase date','id_x':'id'}, axis=1)
-        print(dataframe_merged['purchase date'][0])
-        print(type(dataframe_merged['purchase date'][0]))
-
         if request.method == 'POST':
-            print(request.POST)
             chart_type = request.POST.get('sales')
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
+
+            dataframe_merged['purchase date'] = dataframe_merged['purchase date'].apply( lambda x: x.strftime('%Y-%m-%d'))
+            print(dataframe_merged['purchase date'])
+            dataframe_merged2 = dataframe_merged.groupby('purchase date', as_index=False)['total_price'].agg('sum')
+            print(dataframe_merged2)
     else:
         display_error_message = "Sorry, no records have been found in the database"
 
