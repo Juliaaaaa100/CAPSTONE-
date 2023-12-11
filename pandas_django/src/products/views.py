@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import pandas as pd
 from .models import Product, Purchase
+from .utils import fetch_graph
 
 # Create your views here
 # Define a view function to render a chart content
@@ -20,10 +21,19 @@ def render_chart_view(request):
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
 
+            print(chart_type)
+
             dataframe_merged['purchase date'] = dataframe_merged['purchase date'].apply( lambda x: x.strftime('%Y-%m-%d'))
-            print(dataframe_merged['purchase date'])
             dataframe_merged2 = dataframe_merged.groupby('purchase date', as_index=False)['total_price'].agg('sum')
-            print(dataframe_merged2)
+
+            if chart_type != "":
+                if date_from != "" and date_to != "":
+                    dataframe_merged = dataframe_merged[(dataframe_merged['purchase date']>date_from) & (dataframe_merged['purchase date']< date_to)]
+                    dataframe_merged2 = dataframe_merged.groupby('purchase date', as_index=False)['total_price'].agg('sum')
+                # fetch_graph(chart_type, x=, y=, data =, dataframe=)     
+            else:
+                display_error_message = "In order to continue, select a chart type"
+
     else:
         display_error_message = "Sorry, no records have been found in the database"
 
