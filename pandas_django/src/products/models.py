@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Creating the models below
 # Define a Product model representing items in the store
@@ -27,7 +28,7 @@ class Purchase(models.Model):
      # which user made the sale
     salesman =models.ForeignKey(User, on_delete=models.CASCADE)
      # date of the purchase
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)  
 
 
     # Override the save method to calculate and save the total 
