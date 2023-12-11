@@ -10,21 +10,26 @@ def render_chart_view(request):
     # fetch all the purchase objects from the database and convert them into a pandas DataFrame
     purchase_dataframe = pd.DataFrame(Purchase.objects.all().values())
     product_dataframe['product_id'] = product_dataframe['id']
-    
+ 
+    if purchase_dataframe.shape[0] > 0:
+        display_error_message= None
+        dataframe_merged = pd.merge(purchase_dataframe, product_dataframe, on='product_id').drop(['date_y', 'id_y'], axis=1).rename({'date_x':'purchase date','id_x':'id'}, axis=1)
+        if request.method == 'POST':
+            print(request.POST)
+            chart_type = request.POST.get('sales')
+            date_from = request.POST.get('date_from')
+            date_to = request.POST.get('date_to')
+    else:
+        display_error_message = "Sorry, no records have been found in the database"
+        dataframe_merged = None
 
-    print(purchase_dataframe.shape())
-    dataframe_merged = pd.merge(purchase_dataframe, product_dataframe, on='product_id').drop(['date_y', 'id_y'], axis=1).rename({'date_x':'purchase date','id_x':'id'}, axis=1)
-    if request.method == 'POST':
-        print(request.POST)
-        chart_type = request.POST['sales']
-        date_from = request.POST['date_from']
-        date_to = request.POST['date_to']
 
     # create a context dictionary containing the product data in html format
     context = {
+        'error': display_error_message,
         'products' : product_dataframe.to_html(),
         'purchase':purchase_dataframe.to_html(),
-        'dataframes_merged':dataframe_merged.to_html(), 
+        'dataframes_merged':dataframe_merged, 
 
     }
     # Render products/main.html template with an empty context
