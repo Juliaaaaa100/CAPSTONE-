@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'. and keep the secret key secure
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -19,8 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1yl3@8=rz+r1+)x$anh5j!blpv5g(q=!^yq^u+^glb5&k&w7n-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
+DEBUG = True
+# include the appropriate hosts when deploying to production
 ALLOWED_HOSTS = []
 
 
@@ -36,7 +37,7 @@ INSTALLED_APPS = [
 
     'products',
 ]
-
+# Standard middleware configurations for security, sessions, authentication etc
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -49,10 +50,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'dj_pd.urls'
 
+
+# Defined template settings with paths and context processors
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,14 +70,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dj_pd.wsgi.application'
 
-
+# Database Configuration - Using SQLite as the default database for develop
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -118,10 +121,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static_project')
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR.parent, 'static_cdn', 'static_root')
+STATIC_ROOT = os.path.join(os.path.dirname(
+    BASE_DIR), "static_cdn", "static_root")
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'static_cdn', 'media_root')
+MEDIA_ROOT = os.path.join(os.path.dirname(
+    BASE_DIR), "static_cdn", "media_root")
 
 
 
